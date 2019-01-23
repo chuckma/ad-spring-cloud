@@ -28,7 +28,7 @@ public class UserServiceImpl implements IUserService {
     @Transactional
     public CreateUserResponse createUser(CreateUserRequest request) throws AdException {
 
-        if (request.validate()) {
+        if (!request.validate()) {
             throw new AdException(Constants.ErrorMsg.REQUEST_PARAM_ERROR);
         }
 
