@@ -1,5 +1,6 @@
 package cn.lucas.ad.service;
 
+import cn.lucas.ad.entity.Creative;
 import cn.lucas.ad.exception.AdException;
 import cn.lucas.ad.vo.*;
 
@@ -22,5 +23,8 @@ public interface IAdUnitService {
     AdUnitItResponse createUnitIt(AdUnitItRequest request) throws AdException;
 
     AdUnitDistrictResponse createUnitDistrict(AdUnitDistrictRequest request) throws AdException;
+
+
+    CreativeUnitResponse createCreativeUnit(CreativeUnitRequest request) throws AdException;
 
 }

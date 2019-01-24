@@ -3,14 +3,17 @@ package cn.lucas.ad.service.impl;
 import cn.lucas.ad.constant.Constants;
 import cn.lucas.ad.dao.AdPlanRepository;
 import cn.lucas.ad.dao.AdUnitRepository;
+import cn.lucas.ad.dao.CreativeRepository;
 import cn.lucas.ad.dao.unit_condition.AdUnitDistrictRepository;
 import cn.lucas.ad.dao.unit_condition.AdUnitItRepository;
 import cn.lucas.ad.dao.unit_condition.AdUnitKeywordRepository;
+import cn.lucas.ad.dao.unit_condition.CreativeUnitRepository;
 import cn.lucas.ad.entity.AdPlan;
 import cn.lucas.ad.entity.AdUnit;
 import cn.lucas.ad.entity.unit_condition.AdUnitDistrict;
 import cn.lucas.ad.entity.unit_condition.AdUnitIt;
 import cn.lucas.ad.entity.unit_condition.AdUnitKeyword;
+import cn.lucas.ad.entity.unit_condition.CreativeUnit;
 import cn.lucas.ad.exception.AdException;
 import cn.lucas.ad.service.IAdUnitService;
 import cn.lucas.ad.vo.*;
@@ -36,17 +39,25 @@ public class AdUnitService implements IAdUnitService {
     private final AdUnitItRepository unitItRepository;
     private final AdUnitDistrictRepository unitDistrictRepository;
 
+    private final CreativeUnitRepository creativeUnitrepository;
+
+    private final CreativeRepository creativeRepository;
+
     @Autowired
     public AdUnitService(AdUnitRepository unitRepository,
                          AdPlanRepository planRepository,
                          AdUnitDistrictRepository unitDistrictRepository,
                          AdUnitItRepository unitItRepository,
-                         AdUnitKeywordRepository unitKeywordRepository) {
+                         AdUnitKeywordRepository unitKeywordRepository,
+                         CreativeUnitRepository creativeUnitrepository,
+                         CreativeRepository creativeRepository) {
         this.unitRepository = unitRepository;
         this.planRepository = planRepository;
         this.unitDistrictRepository = unitDistrictRepository;
         this.unitItRepository = unitItRepository;
         this.unitKeywordRepository = unitKeywordRepository;
+        this.creativeUnitrepository = creativeUnitrepository;
+        this.creativeRepository = creativeRepository;
     }
 
     @Override
@@ -110,7 +121,7 @@ public class AdUnitService implements IAdUnitService {
         }
 
         List<AdUnitIt> unitIts = new ArrayList<>();
-        request.getUnitIts().forEach(i->unitIts.add(new AdUnitIt(i.getUnitId(),i.getItTag())));
+        request.getUnitIts().forEach(i -> unitIts.add(new AdUnitIt(i.getUnitId(), i.getItTag())));
 
         List<Long> ids = unitItRepository.saveAll(unitIts).stream()
                 .map(AdUnitIt::getId)
@@ -138,8 +149,32 @@ public class AdUnitService implements IAdUnitService {
         return new AdUnitDistrictResponse(ids);
     }
 
+    @Override
+    public CreativeUnitResponse createCreativeUnit(CreativeUnitRequest request) throws AdException {
+        List<Long> unitIds = request.getUnitItems().stream()
+                .map(CreativeUnitRequest.CreativeUnitItem::getUnitId)
+                .collect(Collectors.toList());
+
+        List<Long> creativeIds = request.getUnitItems().stream()
+                .map(CreativeUnitRequest.CreativeUnitItem::getCreativeId)
+                .collect(Collectors.toList());
+
+        if (!(isRelatedUnitExist(unitIds) && isRelateCreativeExist(creativeIds))) {
+            throw new AdException(Constants.ErrorMsg.REQUEST_PARAM_ERROR);
+        }
+
+        List<CreativeUnit> creativeUnits = new ArrayList<>();
+        request.getUnitItems().forEach(i -> creativeUnits.add(new CreativeUnit(i.getCreativeId(), i.getUnitId())));
+        List<Long> ids = creativeUnitrepository.saveAll(creativeUnits)
+                .stream()
+                .map(CreativeUnit::getId)
+                .collect(Collectors.toList());
+        return new CreativeUnitResponse(ids);
+    }
+
     /**
      * 相关推广单元是否存在
+     *
      * @param unitIds 推广单元 id
      * @return
      */
@@ -153,4 +188,13 @@ public class AdUnitService implements IAdUnitService {
 
         return unitRepository.findAllById(unitIds).size() == new HashSet<>(unitIds).size();
     }
+
+
+    private boolean isRelateCreativeExist(List<Long> creativeIds) {
+        if (CollectionUtils.isEmpty(creativeIds)) {
+            return false;
+        }
+        return creativeRepository.findAllById(creativeIds).size() == new HashSet<>(creativeIds).size();
+    }
+
 }
