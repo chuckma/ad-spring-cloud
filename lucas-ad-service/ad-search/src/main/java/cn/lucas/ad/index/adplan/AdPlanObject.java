@@ -32,7 +32,7 @@ public class AdPlanObject {
     /**
      * 更新索引
      */
-    public void update(AdPlanObject newObject) {
+     void update(AdPlanObject newObject) {
         if (null != newObject.getPlanId()) {
             this.planId = newObject.getPlanId();
         }
