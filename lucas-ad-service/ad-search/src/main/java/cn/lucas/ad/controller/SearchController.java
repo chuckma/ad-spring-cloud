@@ -1,6 +1,7 @@
 package cn.lucas.ad.controller;
 
 import cn.lucas.ad.annotation.IgnoreResponseAdvice;
+import cn.lucas.ad.client.SponsorClient;
 import cn.lucas.ad.client.vo.AdPlan;
 import cn.lucas.ad.client.vo.AdPlanGetRequest;
 import cn.lucas.ad.vo.CommonResponse;
@@ -22,13 +23,22 @@ import java.util.List;
 public class SearchController {
 
 
+    private final SponsorClient sponsorClient;
     private final RestTemplate restTemplate;
 
     @Autowired
-    public SearchController(RestTemplate restTemplate) {
+    public SearchController(RestTemplate restTemplate, SponsorClient sponsorClient) {
         this.restTemplate = restTemplate;
+        this.sponsorClient = sponsorClient;
     }
 
+
+    @IgnoreResponseAdvice
+    @PostMapping("/getAdPlans")
+    public CommonResponse<List<AdPlan>> getAdPlans(@RequestBody AdPlanGetRequest request) {
+        log.info("ad-search: getAdPlans-{}", JSON.toJSONString(request));
+        return sponsorClient.getAdPlans(request);
+    }
 
     @SuppressWarnings("all")
     @IgnoreResponseAdvice
@@ -41,4 +51,6 @@ public class SearchController {
                 CommonResponse.class
         ).getBody();
     }
+
+
 }
