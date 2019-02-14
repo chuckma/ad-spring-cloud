@@ -11,6 +11,9 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * @Author mcg
  * @Date 2019/1/29
+ *
+ *
+ * 正向索引
  **/
 @Slf4j
 @Component

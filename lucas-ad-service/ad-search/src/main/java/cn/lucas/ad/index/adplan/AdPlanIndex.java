@@ -9,6 +9,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author mcg
+ *
+ *  正向索引
  */
 
 @Slf4j
