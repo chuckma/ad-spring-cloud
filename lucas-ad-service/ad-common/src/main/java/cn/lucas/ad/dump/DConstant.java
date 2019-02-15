@@ -10,7 +10,7 @@ package cn.lucas.ad.dump;
 public class DConstant {
 
     // 数据文件存储目录
-    public static final String DATA_ROOT_DIR = "/Users/lucasma/code/git_pro/lucas-ad-spring-cloud/mysql_data";
+    public static final String DATA_ROOT_DIR = "/Users/lucasma/code/git_pro/lucas-ad-spring-cloud/mysql_data/";
 
     // 各个数据表的文件名称
     public static final String AD_PALN = "ad_plan.data";
@@ -22,6 +22,8 @@ public class DConstant {
     public static final String AD_UNIT_KEYWORD = "ad_unit_keyword.data";
 
 
-
+    public static void main(String[] args) {
+        System.out.println(String.format("%s%s", DConstant.DATA_ROOT_DIR, DConstant.AD_PALN));
+    }
 
 }
