@@ -15,6 +15,19 @@ import java.io.IOException;
 
 public class BinLogServiceTest {
 
+//    write ---------
+//    WriteRowsEventData{tableId=224, includedColumns={0, 1, 2}, rows=[
+//    [16, 10, 迈巴赫]
+//]}
+//    update --------
+//    UpdateRowsEventData{tableId=224, includedColumnsBeforeUpdate={0, 1, 2}, includedColumns={0, 1, 2}, rows=[
+//        {before=[14, 10, 宝来], after=[14, 10, 保时捷]}
+//]}
+//    delete -------
+//    DeleteRowsEventData{tableId=224, includedColumns={0, 1, 2}, rows=[
+//    [15, 10, 马自达]
+//]}
+
     public static void main(String[] args) throws IOException {
         BinaryLogClient client = new BinaryLogClient(
             "127.0.0.1",

@@ -20,8 +20,10 @@ import java.util.Map;
 public class TableTemplate {
     private String tableName;
     private String level;
+
+    // 操作类型 insert update delete
     private Map<OpType, List<String>> opTypeFieldSetMap = new HashMap<>();
 
-    // 表示 字段索引 -》 字段名的映射
+    // 表示 字段索引 -> 字段名 的映射
     private Map<Integer, String> posMap = new HashMap<>();
 }
