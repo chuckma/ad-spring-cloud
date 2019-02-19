@@ -51,7 +51,7 @@ public class Constant {
         public static final String TABLE_NAME = "ad_unit_district";
 
         public static final String COLUMN_UNIT_ID = "unit_id";
-        public static final String COLUMN_PROVINCE = "provincen";
+        public static final String COLUMN_PROVINCE = "province";
         public static final String COLUMN_CITY = "city";
     }
 
