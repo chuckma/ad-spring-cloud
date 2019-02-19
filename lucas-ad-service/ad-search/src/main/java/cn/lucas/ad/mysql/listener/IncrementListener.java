@@ -45,8 +45,8 @@ public class IncrementListener implements Ilistener {
     @PostConstruct
     public void register() {
         log.info("IncrementListener register db and table info");
-        Constant.table2Db.forEach(k, v)->aggregationListener.register(v, k, this);
-
+        Constant.table2Db.forEach((k,v)->
+        aggregationListener.register(v,k,this));
     }
 
     /**
