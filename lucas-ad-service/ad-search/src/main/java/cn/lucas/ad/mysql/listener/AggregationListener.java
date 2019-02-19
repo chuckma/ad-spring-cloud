@@ -2,18 +2,18 @@ package cn.lucas.ad.mysql.listener;
 
 import cn.lucas.ad.mysql.TemplateHolder;
 import cn.lucas.ad.mysql.dto.BinlogRowData;
+import cn.lucas.ad.mysql.dto.TableTemplate;
 import com.github.shyiko.mysql.binlog.BinaryLogClient;
-import com.github.shyiko.mysql.binlog.event.Event;
-import com.github.shyiko.mysql.binlog.event.EventData;
-import com.github.shyiko.mysql.binlog.event.EventType;
-import com.github.shyiko.mysql.binlog.event.TableMapEventData;
+import com.github.shyiko.mysql.binlog.event.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.io.Serializable;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Administrator
@@ -137,7 +137,57 @@ public class AggregationListener implements BinaryLogClient.EventListener {
 
     }
 
+    private List<Serializable[]> getAfterValues(EventData eventData) {
+        if (eventData instanceof WriteRowsEventData) {
+            return ((WriteRowsEventData) eventData).getRows();
+        }
+
+        if (eventData instanceof UpdateRowsEventData) {
+            return ((UpdateRowsEventData) eventData).getRows().stream()
+                    .map(Map.Entry::getValue).collect(Collectors.toList());
+        }
+
+        if (eventData instanceof DeleteRowsEventData) {
+            return ((DeleteRowsEventData) eventData).getRows();
+        }
+
+        return Collections.emptyList();
+    }
+
     private BinlogRowData buildRowData(EventData eventData) {
-        return null;
+        TableTemplate table = templateHolder.getTable(tableName);
+        if (null == table) {
+            log.warn("table {} not found", tableName);
+            return null;
+        }
+
+        // 用来存 BinlogRowData 里的  after
+        List<Map<String, String>> afterMapList = new ArrayList<>();
+
+        for (Serializable[] after : getAfterValues(eventData)) {
+            Map<String, String> afterMap = new HashMap<>();
+            int collen = after.length;
+
+            for (int i = 0;  i< collen; i++) {
+                // 取出当前位置对应的列名
+                String colName = table.getPosMap().get(i);
+
+                // 如果没有则说明不关心这个列
+                if (null == colName) {
+                    log.debug("ignore position :{}", i);
+                    continue;
+                }
+
+                String colValue = after[i].toString();
+                afterMap.put(colName, colValue);
+            }
+            afterMapList.add(afterMap);
+
+        }
+
+        BinlogRowData rowData = new BinlogRowData();
+        rowData.setAfter(afterMapList);
+        rowData.setTable(table);
+        return rowData;
     }
 }
