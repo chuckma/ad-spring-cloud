@@ -41,4 +41,40 @@ public class AdUnitObject {
     }
 
 
+    private static boolean isKaiPing(int positionType) {
+        return (positionType & AdUnitConstants.POSITION_TYPE.KAIPING) > 0;
+    }
+
+    private static boolean isTiePian(int positionType) {
+        return (positionType & AdUnitConstants.POSITION_TYPE.TIEPIAN) > 0;
+    }
+
+    private static boolean isTiePianMiddle(int positionType) {
+        return (positionType & AdUnitConstants.POSITION_TYPE.TIEPIAN_MINDLE) > 0;
+    }
+
+    private static boolean isTiePianPause(int positionType) {
+        return (positionType & AdUnitConstants.POSITION_TYPE.TIEPIAN_PAUSE) > 0;
+    }
+
+    private static boolean isTiePianPost(int positionType) {
+        return (positionType & AdUnitConstants.POSITION_TYPE.TIEPIAN_POST) > 0;
+    }
+
+    public static boolean isAdSlotTypeOk(int adSlotType, int positionType) {
+        switch (adSlotType) {
+            case AdUnitConstants.POSITION_TYPE.KAIPING:
+                return isKaiPing(positionType);
+            case AdUnitConstants.POSITION_TYPE.TIEPIAN:
+                return isTiePian(positionType);
+            case AdUnitConstants.POSITION_TYPE.TIEPIAN_MINDLE:
+                return isTiePianMiddle(positionType);
+            case AdUnitConstants.POSITION_TYPE.TIEPIAN_PAUSE:
+                return isTiePianPause(positionType);
+            case AdUnitConstants.POSITION_TYPE.TIEPIAN_POST:
+                return isTiePianPost(positionType);
+            default:
+                return false;
+        }
+    }
 }
