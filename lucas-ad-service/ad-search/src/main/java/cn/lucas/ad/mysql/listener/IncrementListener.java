@@ -26,7 +26,7 @@ import java.util.Map;
 @Component
 public class IncrementListener implements Ilistener {
 
-    @Resource(name = "")
+    @Resource(name = "indexSender")
     private ISender iSender;
     private final AggregationListener aggregationListener;
 

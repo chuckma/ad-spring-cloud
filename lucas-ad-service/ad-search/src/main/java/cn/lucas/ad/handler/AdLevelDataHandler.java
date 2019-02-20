@@ -33,7 +33,7 @@ import java.util.Set;
 public class AdLevelDataHandler {
 
 
-    public static void handlerLevel2(AdPlanTable planTable,OpType type){
+    public static void handleLevel2(AdPlanTable planTable,OpType type){
 
         AdPlanObject adPlanObject = new AdPlanObject(
                 planTable.getId(),
