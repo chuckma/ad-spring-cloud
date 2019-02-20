@@ -35,7 +35,11 @@ public class CommonUtils {
         return result.toString();
     }
 
-    // Tue Jan 01 08:00:00 CST 2019
+    /**
+     * 解析日期格式 Tue Jan 01 08:00:00 CST 2019
+     * @param dateString
+     * @return
+     */
     public static Date parseStringDate(String dateString) {
 
         try {

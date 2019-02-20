@@ -28,12 +28,19 @@ public class BinLogServiceTest {
 //    [15, 10, 马自达]
 //]}
 
+//
+//    write ---------
+//    WriteRowsEventData{tableId=110, includedColumns={0, 1, 2, 3, 4, 5, 6, 7}, rows=[
+//    [11, 10, plan, 1, Tue Jan 01 08:00:00 CST 2019, Tue Jan 01 08:00:00 CST 2019, Tue Jan 01 08:00:00 CST 2019, Tue Jan 01 08:00:00 CST 2019]
+//    Tue Jan 01 08:00:00 CST 2019
+//]}
+
     public static void main(String[] args) throws IOException {
         BinaryLogClient client = new BinaryLogClient(
             "127.0.0.1",
             3306,
             "root",
-            "rootpwd"
+            "123456"
         );
 
 //        client.setBinlogFilename();
