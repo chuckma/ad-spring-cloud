@@ -1,16 +1,19 @@
 package cn.lucas.ad.index.district;
 
 import cn.lucas.ad.index.IndexAware;
+import cn.lucas.ad.search.vo.feature.DistrictFeature;
 import cn.lucas.ad.utils.CommonUtils;
-import lombok.Data;
+import com.sun.xml.internal.bind.v2.TODO;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
 
-import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.stream.Collectors;
 
 /**
  * @author Administrator
@@ -76,5 +79,20 @@ public class UnitDistrictIndex implements IndexAware<String, Set<Long>> {
         }
         log.info("UnitDistrictIndex after delete :{}", unitDistrictMap);
 
+    }
+
+    public  boolean match(Long adUnitId, List<DistrictFeature.ProvinceAndCity> districts) {
+        if (unitDistrictMap.containsKey(adUnitId) &&
+                CollectionUtils.isNotEmpty(unitDistrictMap.get(adUnitId))) {
+            Set<String> unitDistricts = unitDistrictMap.get(adUnitId);
+
+            List<String> targetDistricts = districts.stream()
+                    .map(
+                            d -> CommonUtils.stringConcat(d.getProvince(), d.getCity())
+                    ).collect(Collectors.toList());
+            //TODO
+            return CollectionUtils.isSubCollection(targetDistricts, unitDistricts);
+        }
+        return false;
     }
 }
