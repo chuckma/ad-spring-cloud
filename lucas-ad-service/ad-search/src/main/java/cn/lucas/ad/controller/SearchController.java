@@ -4,6 +4,9 @@ import cn.lucas.ad.annotation.IgnoreResponseAdvice;
 import cn.lucas.ad.client.SponsorClient;
 import cn.lucas.ad.client.vo.AdPlan;
 import cn.lucas.ad.client.vo.AdPlanGetRequest;
+import cn.lucas.ad.search.ISearch;
+import cn.lucas.ad.search.vo.SearchRequest;
+import cn.lucas.ad.search.vo.SearchResponse;
 import cn.lucas.ad.vo.CommonResponse;
 import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
@@ -22,16 +25,27 @@ import java.util.List;
 @RestController
 public class SearchController {
 
-
+    private final ISearch iSearch;
     private final SponsorClient sponsorClient;
     private final RestTemplate restTemplate;
 
     @Autowired
-    public SearchController(RestTemplate restTemplate, SponsorClient sponsorClient) {
+    public SearchController(RestTemplate restTemplate, SponsorClient sponsorClient, ISearch iSearch) {
         this.restTemplate = restTemplate;
         this.sponsorClient = sponsorClient;
+        this.iSearch = iSearch;
     }
 
+    /**
+     * 广告请求外部调用接口
+     * @param request
+     * @return
+     */
+    @PostMapping("/fetchAds")
+    public SearchResponse fetchAds(@RequestBody SearchRequest request) {
+        log.info("ad-search: fetchAds ->{}", JSON.toJSONString(request));
+        return iSearch.fetchAds(request);
+    }
 
     @IgnoreResponseAdvice
     @PostMapping("/getAdPlans")
