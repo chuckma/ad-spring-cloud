@@ -1,7 +1,12 @@
 package cn.lucas.ad.search.impl;
 
+import cn.lucas.ad.index.CommonStatus;
 import cn.lucas.ad.index.DataTable;
 import cn.lucas.ad.index.adunit.AdUnitIndex;
+import cn.lucas.ad.index.adunit.AdUnitObject;
+import cn.lucas.ad.index.creative.CreativeIndex;
+import cn.lucas.ad.index.creative.CreativeObject;
+import cn.lucas.ad.index.creativeunit.CreativeUnitIndex;
 import cn.lucas.ad.index.district.UnitDistrictIndex;
 import cn.lucas.ad.index.interest.UnitItIndex;
 import cn.lucas.ad.index.keyword.UnitKeywordIndex;
@@ -13,9 +18,11 @@ import cn.lucas.ad.search.vo.feature.FeatureRelation;
 import cn.lucas.ad.search.vo.feature.ItFeature;
 import cn.lucas.ad.search.vo.feature.KeywordFeature;
 import cn.lucas.ad.search.vo.media.AdSlot;
+import com.alibaba.fastjson.JSON;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.kafka.common.protocol.types.Field;
+import org.omg.CORBA.INTERNAL;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -57,8 +64,21 @@ public class SearchImpl implements ISearch {
             } else {
                 targetUnitIdSet = getORRelationUnitIds(adUnitIdSet, keywordFeature, districtFeature, itFeature);
             }
+            List<AdUnitObject> unitObjects = DataTable.of(AdUnitIndex.class).fetch(targetUnitIdSet);
+            filterAdUnitAndPlanStatus(unitObjects, CommonStatus.VALID);
+            List<Long> adIds = DataTable.of(CreativeUnitIndex.class).selectAds(unitObjects);
+            List<CreativeObject> creatives = DataTable.of(CreativeIndex.class).fetch(adIds);
+
+            // 通过 AdSlot 实现对 CreativeObject 的过滤
+            filterCreativeByAdSlot(creatives,
+                    adSlot.getWidth(),
+                    adSlot.getHeight(),
+                    adSlot.getType()
+            );
+            adSlot2Ads.put(adSlot.getAdSlotCode(), bulidCreativeResponse(creatives));
         }
-        return null;
+        log.info("fetchAds :{} - {} ", JSON.toJSONString(request), JSON.toJSONString(response));
+        return response;
     }
 
     private Set<Long> getORRelationUnitIds(Set<Long> adUnitIdSet,
@@ -77,7 +97,7 @@ public class SearchImpl implements ISearch {
         filterDistrictFeature(districtUnitIdSet, districtFeature);
         filterItTagFeature(itUnitIdSet, itFeature);
 
-        // TODO
+        // TODO 11-5
         // 并集合处理
         return new HashSet<>(
                 CollectionUtils.union(
@@ -91,7 +111,7 @@ public class SearchImpl implements ISearch {
             return;
         }
         if (CollectionUtils.isNotEmpty(keywordFeature.getKeywords())) {
-            // TODO
+            // TODO 11-5
             // for 循环过滤
             CollectionUtils.filter(
                     adUnitIds,
@@ -125,5 +145,60 @@ public class SearchImpl implements ISearch {
                     adUnitId -> DataTable.of(UnitItIndex.class).match(adUnitId, itFeature.getIts())
             );
         }
+    }
+
+    /**
+     * 根据推广单元和所关联的推广计划的状态  实现对 unitObjects 的过滤
+     *
+     * @param unitObjects
+     * @param status
+     */
+    private void filterAdUnitAndPlanStatus(List<AdUnitObject> unitObjects,
+                                           CommonStatus status) {
+        if (CollectionUtils.isEmpty(unitObjects)) {
+            return;
+        }
+        CollectionUtils.filter(
+                unitObjects,
+                object -> object.getUnitStatus().equals(status.getStatus())
+                        && object.getAdPlanObject().getPlanStatus().equals(status.getStatus())
+        );
+
+    }
+
+
+    private void filterCreativeByAdSlot(List<CreativeObject> creativeObjects,
+                                        Integer widht,
+                                        Integer height,
+                                        List<Integer> type) {
+
+        if (CollectionUtils.isEmpty(creativeObjects)) {
+            return;
+        }
+
+        CollectionUtils.filter(
+                creativeObjects,
+                creative -> creative.getAuditStatus().equals(CommonStatus.VALID.getStatus())
+                        && creative.getWidth().equals(widht)
+                        && creative.getHeight().equals(height)
+                        && type.contains(creative.getType())
+        );
+    }
+
+
+    /**
+     * // 随机获取一个 Creative 对象 ,根据需求可以自行设定 排序
+     * @param creatives
+     * @return
+     */
+    private List<SearchResponse.Creative> bulidCreativeResponse(List<CreativeObject> creatives) {
+        if (CollectionUtils.isEmpty(creatives)) {
+            return Collections.emptyList();
+        }
+        CreativeObject randomObject = creatives.get(
+                Math.abs(new Random().nextInt()) % creatives.size()
+        );
+
+        return Collections.singletonList(SearchResponse.convert(randomObject));
     }
 }
