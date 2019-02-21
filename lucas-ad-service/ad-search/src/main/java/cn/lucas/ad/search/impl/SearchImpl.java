@@ -19,6 +19,7 @@ import cn.lucas.ad.search.vo.feature.ItFeature;
 import cn.lucas.ad.search.vo.feature.KeywordFeature;
 import cn.lucas.ad.search.vo.media.AdSlot;
 import com.alibaba.fastjson.JSON;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -33,7 +34,20 @@ import java.util.*;
 @Slf4j
 @Component
 public class SearchImpl implements ISearch {
+
+    /**
+     * fetchAds 方法抛出异常时候，会执行这里
+     * 在 应用启动注解中 定义了一个 @EnableCircuitBreaker 它会通过 AOP 拦截 @HystrixCommand 的方法
+     * @param request
+     * @param throwable
+     * @return
+     */
+    public SearchResponse fallBack(SearchRequest request, Throwable throwable) {
+        return null;
+    }
+
     @Override
+    @HystrixCommand(fallbackMethod = "fallBack")
     public SearchResponse fetchAds(SearchRequest request) {
         // 请求的广告位信息
         List<AdSlot> adSlots = request.getRequestInfo().getAdSlots();
