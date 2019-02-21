@@ -1,4 +1,4 @@
-package com.lucas.ad.service;
+package cn.lucas.ad.service;
 
 import cn.lucas.ad.constant.CommonStatus;
 import cn.lucas.ad.dao.AdPlanRepository;
@@ -18,7 +18,7 @@ import cn.lucas.ad.entity.unit_condition.AdUnitIt;
 import cn.lucas.ad.entity.unit_condition.AdUnitKeyword;
 import cn.lucas.ad.entity.unit_condition.CreativeUnit;
 import com.alibaba.fastjson.JSON;
-import com.lucas.ad.Application;
+import cn.lucas.ad.Application;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Test;
