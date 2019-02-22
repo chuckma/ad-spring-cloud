@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
@@ -26,17 +25,16 @@ import java.util.stream.Collectors;
 @DependsOn("dataTable")
 public class IndexFileLoader {
 
-
     @PostConstruct
     public void init() {
 
         List<String> adPlanStrings = loadDumpData(
                 String.format("%s%s",
                         DConstant.DATA_ROOT_DIR,
-                        DConstant.AD_PALN)
+                        DConstant.AD_PLAN)
         );
         adPlanStrings.forEach(p -> AdLevelDataHandler.handleLevel2(
-                JSON.parseObject(p, (Type) AdPlanTable.class),
+                JSON.parseObject(p, AdPlanTable.class),
                 OpType.ADD
         ));
 

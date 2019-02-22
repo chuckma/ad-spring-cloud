@@ -1,0 +1,57 @@
+server:
+  port: 7001
+  servlet:
+    context-path: /ad-search # 代表controller 的前缀
+
+spring:
+  application:
+    name: eureka-client-ad-search
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate.format_sql: true
+    open-in-view: false   # 对于一些开启懒加载的Bean 如果找不到对应的bean 就会报错 设置为false 就不会了
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/ad_data?autoReconnect=true
+    username: root
+    password: 123456
+    tomcat:
+      max-active: 4
+      min-idle: 2
+      initial-size: 2
+
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://server1:8000/eureka/
+    enabled: false
+
+
+feign:
+  hystrix:
+    enabled: true
+
+
+# 服务的监控，开启监控信息
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+adconf:
+  mysql:
+    host: 127.0.0.1
+    port: 3306
+    username: root
+    password: 123456
+    binlogName: ""
+    position: -1
+
+  kafka:
+    topic:  ad-search-mysql-data
+
