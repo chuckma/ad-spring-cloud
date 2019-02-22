@@ -14,9 +14,9 @@ spring:
       hibernate.format_sql: true
     open-in-view: false   # 对于一些开启懒加载的Bean 如果找不到对应的bean 就会报错 设置为false 就不会了
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/ad-data?autoReconnect=true
+    url: jdbc:mysql://127.0.0.1:3306/ad_data?autoReconnect=true
     username: root
-    password: rootpwd
+    password: 123456
     tomcat:
       max-active: 4
       min-idle: 2
@@ -27,3 +27,4 @@ eureka:
   client:
     service-url:
       defaultZone: http://server1:8000/eureka/
+    enabled: false  # false 就不会将服务注册到 defaultZone
