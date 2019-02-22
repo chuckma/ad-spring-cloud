@@ -70,7 +70,7 @@ public class AdUnitService implements IAdUnitService {
             throw new AdException(Constants.ErrorMsg.CAN_NOT_FIND_RECORD);
         }
 
-        AdUnit oldUnit = unitRepository.findByPlanIdaAndUnitName(
+        AdUnit oldUnit = unitRepository.findByPlanIdAndUnitName(
                 request.getPlanId(), request.getUnitName()
         );
 

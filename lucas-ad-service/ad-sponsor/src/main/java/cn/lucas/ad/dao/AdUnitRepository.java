@@ -13,7 +13,7 @@ public interface AdUnitRepository extends JpaRepository<AdUnit, Long> {
      * @param unitName
      * @return
      */
-    AdUnit findByPlanIdaAndUnitName(Long planId, String unitName);
+    AdUnit findByPlanIdAndUnitName(Long planId, String unitName);
 
 
     /**
