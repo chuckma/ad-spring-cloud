@@ -3,7 +3,6 @@ package cn.lucas.ad.index.district;
 import cn.lucas.ad.index.IndexAware;
 import cn.lucas.ad.search.vo.feature.DistrictFeature;
 import cn.lucas.ad.utils.CommonUtils;
-import com.sun.xml.internal.bind.v2.TODO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
